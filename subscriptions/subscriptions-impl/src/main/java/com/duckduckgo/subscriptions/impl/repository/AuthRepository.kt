@@ -64,6 +64,8 @@ interface AuthRepository {
     suspend fun canSupportEncryption(): Boolean
     suspend fun setFeatures(basePlanId: String, features: Set<String>)
     suspend fun getFeatures(basePlanId: String): Set<String>
+    suspend fun isFreeTrialActive(): Boolean
+    suspend fun getSubscriptionEnrollmentDate(): Long?
 }
 
 @Module
@@ -232,6 +234,14 @@ internal class RealAuthRepository constructor(
     private suspend fun updateSerpPromoCookie() = withContext(dispatcherProvider.io()) {
         val accessToken = subscriptionsDataStore.run { accessTokenV2 ?: accessToken }
         serpPromo.injectCookie(accessToken)
+    }
+
+    override suspend fun isFreeTrialActive(): Boolean {
+        return subscriptionsDataStore.freeTrialActive
+    }
+
+    override suspend fun getSubscriptionEnrollmentDate(): Long? {
+        return subscriptionsDataStore.startedAt
     }
 }
 
