@@ -53,7 +53,8 @@ class SubscriptionStatusAttributedMetricTest {
     private val subscriptionsDataStore: SubscriptionsDataStore = mock()
     private val attributedMetricConfig: AttributedMetricConfig = mock()
     private val subscriptionToggle = FakeFeatureToggleFactory.create(
-        FakeSubscriptionMetricsConfigFeature::class.java)
+        FakeSubscriptionMetricsConfigFeature::class.java,
+    )
     private val lifecycleOwner: LifecycleOwner = mock()
 
     private lateinit var testee: SubscriptionStatusAttributedMetric
