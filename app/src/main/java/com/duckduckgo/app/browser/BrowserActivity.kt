@@ -841,7 +841,7 @@ open class BrowserActivity : DuckDuckGoActivity() {
         globalActivityStarter.start(this, DownloadsScreenNoParams)
     }
 
-    private fun closeDuckChat() {
+    fun closeDuckChat() {
         isDuckChatVisible = false
         externalIntentProcessingState.onDuckAiClosed()
         val fragment = duckAiFragment
