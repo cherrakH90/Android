@@ -180,6 +180,8 @@ import com.duckduckgo.app.browser.webshare.WebShareChooser
 import com.duckduckgo.app.browser.webshare.WebViewCompatWebShareChooser
 import com.duckduckgo.app.browser.webview.WebContentDebugging
 import com.duckduckgo.app.browser.webview.WebViewBlobDownloadFeature
+import com.duckduckgo.app.browser.webview.WebViewCompatFeature
+import com.duckduckgo.app.browser.webview.WebViewCompatFeatureSettings
 import com.duckduckgo.app.browser.webview.safewebview.SafeWebViewFeature
 import com.duckduckgo.app.cta.ui.BrokenSitePromptDialogCta
 import com.duckduckgo.app.cta.ui.Cta
@@ -343,6 +345,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -595,6 +599,9 @@ class BrowserTabFragment :
 
     @Inject
     lateinit var webViewCompatWrapper: WebViewCompatWrapper
+
+    @Inject
+    lateinit var webViewCompatFeature: WebViewCompatFeature
 
     /**
      * We use this to monitor whether the user was seeing the in-context Email Protection signup prompt
@@ -3224,6 +3231,7 @@ class BrowserTabFragment :
                 onInContextEmailProtectionSignupPromptShown = { showNativeInContextEmailProtectionSignupPrompt() },
             )
             configureWebViewForBlobDownload(it)
+            configureWebViewForWebViewCompatTest(it)
             configureWebViewForAutofill(it)
             printInjector.addJsInterface(it) { viewModel.printFromWebView() }
             autoconsent.addJsInterface(it, autoconsentCallback)
@@ -3367,6 +3375,32 @@ class BrowserTabFragment :
         buckDialogIntroBubble.root.gone()
         bbDialogIntroBubble.root.gone()
         daxDialogIntroBubble.root.gone()
+    }
+
+    private var proxy: JavaScriptReplyProxy? = null
+
+    private val delay = "\$DELAY$"
+    private val postInitialPing = "\$POST_INITIAL_PING$"
+    private val replyToNativeMessages = "\$REPLY_TO_NATIVE_MESSAGES$"
+
+    private fun configureWebViewForWebViewCompatTest(webView: DuckDuckGoWebView) {
+        lifecycleScope.launch(dispatchers.main()) {
+            val script = withContext(dispatchers.io()) {
+                if (!webViewCompatFeature.self().isEnabled()) return@withContext null
+
+                val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+                val adapter = moshi.adapter(WebViewCompatFeatureSettings::class.java)
+                val webViewCompatSettings = webViewCompatFeature.self().getSettings()?.let {
+                    adapter.fromJson(it)
+                }
+                context?.resources?.openRawResource(R.raw.webviewcompat_test_script)?.bufferedReader().use { it?.readText() }.orEmpty()
+                    .replace(delay, webViewCompatSettings?.jsInitialPingDelay?.toString() ?: "0")
+                    .replace(postInitialPing, webViewCompatFeature.jsSendsInitialPing().isEnabled().toString())
+                    .replace(replyToNativeMessages, webViewCompatFeature.jsRepliesToNativeMessages().isEnabled().toString())
+            } ?: return@launch
+
+            webViewCompatWrapper.addDocumentStartJavaScript(webView, script, setOf("*"))
+        }
     }
 
     @SuppressLint("AddDocumentStartJavaScriptUsage")
