@@ -34,45 +34,20 @@
         tools:parentTag="androidx.coordinatorlayout.widget.CoordinatorLayout">
 
         <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:id="@+id/newTabButton"
+            android:layout_width="@dimen/toolbarIcon"
+            android:layout_height="@dimen/toolbarIcon"
+            android:background="@drawable/selectable_item_experimental_background"
+            tools:visibility="visible">
 
-            <FrameLayout
-                android:id="@+id/newTabButton"
-                android:layout_width="@dimen/toolbarIcon"
-                android:layout_height="@dimen/toolbarIcon"
-                android:background="@drawable/selectable_item_experimental_background"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <ImageView
-                    android:id="@+id/newTabButtonImageView"
-                    android:layout_width="@dimen/bottomNavIcon"
-                    android:layout_height="@dimen/bottomNavIcon"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/newTabMenuItem"
-                    android:scaleType="center"
-                    android:src="@drawable/ic_add_24" />
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/autofillButton"
-                android:layout_width="@dimen/toolbarIcon"
-                android:layout_height="@dimen/toolbarIcon"
-                android:background="@drawable/selectable_item_experimental_background"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <ImageView
-                    android:id="@+id/autofillButtonImageView"
-                    android:layout_width="@dimen/bottomNavIcon"
-                    android:layout_height="@dimen/bottomNavIcon"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/autofillManagementScreenTitle"
-                    android:scaleType="center"
-                    android:src="@drawable/ic_key_24" />
-            </FrameLayout>
-
+            <ImageView
+                android:id="@+id/newTabButtonImageView"
+                android:layout_width="@dimen/bottomNavIcon"
+                android:layout_height="@dimen/bottomNavIcon"
+                android:layout_gravity="center"
+                android:contentDescription="@string/newTabMenuItem"
+                android:scaleType="center"
+                android:src="@drawable/ic_add_24" />
         </FrameLayout>
 
         <Space

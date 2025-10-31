@@ -993,6 +993,12 @@ open class BrowserActivity : DuckDuckGoActivity() {
             },
             300,
         )
+        Handler(Looper.getMainLooper()).postDelayed(
+            {
+                binding.navigationBarMockup.root.gone()
+            },
+            2000,
+        )
     }
 
     override fun toggleFullScreen() {
@@ -1411,6 +1417,11 @@ open class BrowserActivity : DuckDuckGoActivity() {
 
                 if (Build.VERSION.SDK_INT >= 28) {
                     omnibarToolbarMockupBinding.mockOmniBarContainerShadow.addBottomShadow()
+                }
+
+                if (settingsDataStore.omnibarType == OmnibarType.SPLIT) {
+                    binding.topMockupSingleToolbar.iconsContainer.gone()
+                    binding.navigationBarMockup.root.show()
                 }
             }
 
