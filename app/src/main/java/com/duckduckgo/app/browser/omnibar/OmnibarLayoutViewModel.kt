@@ -55,6 +55,7 @@ import com.duckduckgo.app.statistics.pixels.Pixel.PixelType.Unique
 import com.duckduckgo.app.tabs.model.TabRepository
 import com.duckduckgo.app.trackerdetection.model.Entity
 import com.duckduckgo.browser.api.UserBrowserProperties
+import com.duckduckgo.browser.ui.omnibar.OmnibarType
 import com.duckduckgo.common.utils.DispatcherProvider
 import com.duckduckgo.di.scopes.FragmentScope
 import com.duckduckgo.duckchat.api.DuckAiFeatureState
@@ -106,6 +107,7 @@ class OmnibarLayoutViewModel @Inject constructor(
     private val _viewState = MutableStateFlow(
         ViewState(
             showChatMenu = duckAiFeatureState.showOmnibarShortcutInAllStates.value,
+            showButtons = settingsDataStore.omnibarType != OmnibarType.SPLIT,
         ),
     )
 
@@ -175,6 +177,7 @@ class OmnibarLayoutViewModel @Inject constructor(
         val showShadows: Boolean = false,
         val showTextInputClickCatcher: Boolean = false,
         val showFindInPage: Boolean = false,
+        val showButtons: Boolean = true,
     ) {
         fun shouldUpdateOmnibarText(isFullUrlEnabled: Boolean): Boolean {
             return this.viewMode is Browser || this.viewMode is MaliciousSiteWarning || (!isFullUrlEnabled && omnibarText.isNotEmpty())

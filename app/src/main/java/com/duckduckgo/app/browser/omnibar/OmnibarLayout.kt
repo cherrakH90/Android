@@ -589,10 +589,20 @@ class OmnibarLayout @JvmOverloads constructor(
 
         omnibarCardShadow.isGone = viewState.viewMode is ViewMode.CustomTab && !isFindInPageVisible
 
+        renderOmnibarButtonContainer(viewState.showButtons)
+
         renderButtons(viewState)
 
         omniBarButtonTransitionSet.doOnEnd {
             omnibarTextInput.requestLayout()
+        }
+    }
+
+    private fun renderOmnibarButtonContainer(showButtons: Boolean) {
+        if (showButtons) {
+            iconsContainer.show()
+        } else {
+            iconsContainer.gone()
         }
     }
 
